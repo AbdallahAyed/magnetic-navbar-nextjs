@@ -70,6 +70,10 @@ export function Nav() {
                 const item = event.currentTarget;
                 setTransform(item, event, x, y);
               }}
+              onPointerLeave={(event) => {
+                x.set(0);
+                y.set(0);
+              }}
               style={{ x, y }}
             >
               <MotionLink
