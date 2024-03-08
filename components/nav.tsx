@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, MotionValue, useMotionValue } from "framer-motion";
+import {
+  motion,
+  MotionValue,
+  useMotionValue,
+  AnimatePresence,
+  useTransform,
+} from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -21,7 +27,6 @@ export function Nav() {
       name: "contact",
     },
   ];
-
   const pathname = usePathname();
   const MotionLink = motion(Link);
 
@@ -47,47 +52,60 @@ export function Nav() {
     const bounds = item.getBoundingClientRect();
     const relativeX = event.clientX - bounds.left;
     const relativeY = event.clientY - bounds.top;
-
     const xRange = mapRange(0, bounds.width, -1, 1)(relativeX);
     const yRange = mapRange(0, bounds.height, -1, 1)(relativeY);
-
     x.set(xRange * 10);
     y.set(yRange * 10);
-    console.log(xRange);
+    console.log(xRange, yRange);
   };
 
   return (
     <nav className="p-8">
-      <ul className="flex gap-12">
-        {links.map((link) => {
-          const x = useMotionValue(0);
-          const y = useMotionValue(0);
-
-          return (
-            <motion.li
-              key={link.path}
-              onPointerMove={(event) => {
-                const item = event.currentTarget;
-                setTransform(item, event, x, y);
-              }}
-              onPointerLeave={(event) => {
-                x.set(0);
-                y.set(0);
-              }}
-              style={{ x, y }}
-            >
-              <MotionLink
-                href={link.path}
-                className={cn(
-                  "font-medium rounded-md text-sm py-2 px-4 transition-all duration-500 ease-out hover:bg-slate-200",
-                  pathname === link.path ? "bg-slate-300" : ""
-                )}
+      <ul className="flex gap-28 justify-center">
+        <AnimatePresence>
+          {links.map((link) => {
+            const x = useMotionValue(0);
+            const y = useMotionValue(0);
+            const textX = useTransform(x, (latest) => latest * 0.6);
+            const textY = useTransform(y, (latest) => latest * 0.5);
+            return (
+              <motion.li
+                onPointerMove={(event) => {
+                  const item = event.currentTarget;
+                  setTransform(item, event, x, y);
+                }}
+                key={link.path}
+                onPointerLeave={(event) => {
+                  x.set(0);
+                  y.set(0);
+                }}
+                style={{ x, y }}
               >
-                <span>{link.name}</span>
-              </MotionLink>
-            </motion.li>
-          );
-        })}
+                <MotionLink
+                  className={cn(
+                    "font-medium relative rounded-md text-sm py-2 px-4 transition-all duration-500 ease-out hover:bg-slate-200",
+                    pathname === link.path ? "bg-slate-300" : ""
+                  )}
+                  href={link.path}
+                >
+                  <motion.span
+                    style={{ x: textX, y: textY }}
+                    className="z-10 absolute text-neutral-900"
+                  >
+                    {link.name}
+                  </motion.span>
+                  {pathname === link.path ? (
+                    <motion.div
+                      transition={{ type: "spring" }}
+                      layoutId="underline"
+                      className="absolute w-[250%] h-full rounded-md left-0 bottom-0 bg-blue-300"
+                    ></motion.div>
+                  ) : null}
+                </MotionLink>
+              </motion.li>
+            );
+          })}
+        </AnimatePresence>
       </ul>
     </nav>
   );
