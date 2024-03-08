@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   motion,
@@ -8,6 +7,7 @@ import {
   useMotionValue,
   AnimatePresence,
   useTransform,
+  color,
 } from "framer-motion";
 
 import { cn } from "@/lib/utils";
@@ -15,20 +15,22 @@ import { cn } from "@/lib/utils";
 export function Nav() {
   const links = [
     {
-      path: "/",
-      name: "home",
+      path: "https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app",
+      name: "Docs",
     },
     {
-      path: "/projects",
-      name: "projects",
+      path: "https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app",
+      name: "Learn",
     },
     {
-      path: "/contact",
-      name: "contact",
+      path: "https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app",
+      name: "Templates",
+    },
+    {
+      path: "https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app",
+      name: "Deploy",
     },
   ];
-  const pathname = usePathname();
-  const MotionLink = motion(Link);
 
   const mapRange = (
     inputLower: number,
@@ -61,7 +63,7 @@ export function Nav() {
 
   return (
     <nav className="p-8">
-      <ul className="flex gap-28 justify-center">
+      <ul className="flex gap-32 justify-center">
         <AnimatePresence>
           {links.map((link) => {
             const x = useMotionValue(0);
@@ -81,12 +83,13 @@ export function Nav() {
                 }}
                 style={{ x, y }}
               >
-                <MotionLink
+                <motion.a
                   className={cn(
-                    "font-medium relative rounded-md text-sm py-2 px-4 transition-all duration-500 ease-out hover:bg-slate-200",
-                    pathname === link.path ? "bg-slate-300" : ""
+                    "font-medium relative rounded-md text-lg py-2 px-4 transition-all duration-500 ease-out hover:bg-slate-200"
                   )}
                   href={link.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <motion.span
                     style={{ x: textX, y: textY }}
@@ -94,14 +97,14 @@ export function Nav() {
                   >
                     {link.name}
                   </motion.span>
-                  {pathname === link.path ? (
+                  {/* {pathname === link.path ? (
                     <motion.div
                       transition={{ type: "spring" }}
                       layoutId="underline"
                       className="absolute w-[250%] h-full rounded-md left-0 bottom-0 bg-blue-300"
                     ></motion.div>
-                  ) : null}
-                </MotionLink>
+                  ) : null} */}
+                </motion.a>
               </motion.li>
             );
           })}
